@@ -4,8 +4,11 @@ using ToDoList.Data;
 using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
+/*
+ GEROU O ARQUIVO DUPLICADO
 builder.Services.AddDbContext<ApplicationDbcontext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("ApplicationDbcontext") ?? throw new InvalidOperationException("Connection string 'ApplicationDbcontext' not found.")));
+*/
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");

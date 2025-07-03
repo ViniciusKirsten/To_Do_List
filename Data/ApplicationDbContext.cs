@@ -10,6 +10,5 @@ public class ApplicationDbContext : IdentityDbContext
         : base(options)
     {
     }
-    
     public DbSet<Todo> Todos { get; set; } //representa a tabela em SQLite
 }

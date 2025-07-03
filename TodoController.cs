@@ -6,14 +6,16 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using To_Do_List;
+using ToDoList.Data;
+
 
 namespace ToDoList
 {
     public class TodoController : Controller
     {
-        private readonly ApplicationDbcontext _context;
+        private readonly ApplicationDbContext _context;
 
-        public TodoController(ApplicationDbcontext context)
+        public TodoController(ApplicationDbContext context)
         {
             _context = context;
         }
@@ -21,7 +23,7 @@ namespace ToDoList
         // GET: Todo
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Todo.ToListAsync());
+            return View(await _context.Todos.ToListAsync());
         }
 
         // GET: Todo/Details/5
@@ -32,7 +34,7 @@ namespace ToDoList
                 return NotFound();
             }
 
-            var todo = await _context.Todo
+            var todo = await _context.Todos
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (todo == null)
             {
@@ -72,7 +74,7 @@ namespace ToDoList
                 return NotFound();
             }
 
-            var todo = await _context.Todo.FindAsync(id);
+            var todo = await _context.Todos.FindAsync(id);
             if (todo == null)
             {
                 return NotFound();
@@ -123,7 +125,7 @@ namespace ToDoList
                 return NotFound();
             }
 
-            var todo = await _context.Todo
+            var todo = await _context.Todos
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (todo == null)
             {
@@ -138,10 +140,10 @@ namespace ToDoList
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var todo = await _context.Todo.FindAsync(id);
+            var todo = await _context.Todos.FindAsync(id);
             if (todo != null)
             {
-                _context.Todo.Remove(todo);
+                _context.Todos.Remove(todo);
             }
 
             await _context.SaveChangesAsync();
@@ -150,7 +152,7 @@ namespace ToDoList
 
         private bool TodoExists(int id)
         {
-            return _context.Todo.Any(e => e.Id == id);
+            return _context.Todos.Any(e => e.Id == id);
         }
     }
 }
