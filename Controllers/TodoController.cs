@@ -1,10 +1,14 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using To_Do_List;
 using ToDoList.Data;
 
 namespace ToDoList.Controllers
-{
+{  
+    [Authorize] //atributo do ASP.NET | colocando dessa forma, todos os metodos desse controller
+                //vao precisar de autenticacao, ou eu posso colocar por metodo
+                //colocando [AllowAnonymous] eu consigo deixar o metodo ser autorizacao
     public class TodoController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -49,10 +53,14 @@ namespace ToDoList.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Done,CreateAt,LastUpdateDate,User")] Todo todo)
+        public async Task<IActionResult> Create(Todo todo)
         {
+            //Create([Bind("Title")] Todo todo)
+            //ModelState.IsValid
+            todo.User = User.Identity.Name ?? "teste@teste.com";
             if (ModelState.IsValid)
             {
+                //todo.User = User.Identity.Name;
                 _context.Add(todo);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
