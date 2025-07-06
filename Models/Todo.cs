@@ -7,7 +7,8 @@ namespace To_Do_List
     public class Todo
     {
         public int Id { get; set; }
-        
+        public string? User { get; set; }
+         
         [DisplayName("Título")]
         [Required(ErrorMessage = "Campo obrigatório")] //ErrorMessage serve para que ele sobreescreva a mensagem em inglês
         public string Title { get; set; }
@@ -17,6 +18,6 @@ namespace To_Do_List
         
         public DateTime CreateAt { get; set; } = DateTime.Now;
         public DateTime LastUpdateDate { get; set; } = DateTime.Now;
-        public string User { get; set; }
+       
     }
 }

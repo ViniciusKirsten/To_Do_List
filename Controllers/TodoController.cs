@@ -53,14 +53,11 @@ namespace ToDoList.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Todo todo)
+        public async Task<IActionResult> Create([Bind("Title")] Todo todo)
         {
-            //Create([Bind("Title")] Todo todo)
-            //ModelState.IsValid
-            todo.User = User.Identity.Name ?? "teste@teste.com";
             if (ModelState.IsValid)
             {
-                //todo.User = User.Identity.Name;
+                todo.User = User.Identity.Name;
                 _context.Add(todo);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
