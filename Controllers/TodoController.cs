@@ -6,9 +6,9 @@ using ToDoList.Data;
 
 namespace ToDoList.Controllers
 {  
-    [Authorize] //atributo do ASP.NET | colocando dessa forma, todos os metodos desse controller
+                 //atributo do ASP.NET | colocando dessa forma, todos os metodos desse controller
                 //vao precisar de autenticacao, ou eu posso colocar por metodo
-                //colocando [AllowAnonymous] eu consigo deixar o metodo ser autorizacao
+    [Authorize] //colocando [AllowAnonymous] eu consigo deixar o metodo ser autorizacao
     public class TodoController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -21,7 +21,11 @@ namespace ToDoList.Controllers
         // GET: Todo
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Todos.ToListAsync());
+            return View(await _context.Todos
+                .AsNoTracking()
+                .Where(x => x.User == User.Identity.Name) //Configuração que fizemos para o usuário conseguir visualizar apenas a sua tarefa
+                .ToListAsync());
+                
         }
 
         // GET: Todo/Details/5
@@ -39,6 +43,11 @@ namespace ToDoList.Controllers
                 return NotFound();
             }
 
+            if (todo.User != User.Identity.Name) //para que o usuario consiga ver os detalhes apenas do que ele criou
+            {
+                return NotFound();
+            }
+            
             return View(todo);
         }
 
@@ -78,6 +87,10 @@ namespace ToDoList.Controllers
             {
                 return NotFound();
             }
+            if (todo.User != User.Identity.Name) //Para que o usuario consiga editar o que foi ele que criou
+            {
+                return NotFound();
+            }
             return View(todo);
         }
 
@@ -86,7 +99,7 @@ namespace ToDoList.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Done,CreateAt,LastUpdateDate,User")] Todo todo)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Done")] Todo todo)
         {
             if (id != todo.Id)
             {
@@ -97,6 +110,8 @@ namespace ToDoList.Controllers
             {
                 try
                 {
+                    todo.User = User.Identity.Name;
+                    todo.LastUpdateDate = DateTime.Now;
                     _context.Update(todo);
                     await _context.SaveChangesAsync();
                 }
@@ -143,6 +158,11 @@ namespace ToDoList.Controllers
             if (todo != null)
             {
                 _context.Todos.Remove(todo);
+            }
+            
+            if (todo.User != User.Identity.Name)//Para que o usuário consiga deletar apenas as suas tarefas
+            {
+                return NotFound();
             }
 
             await _context.SaveChangesAsync();
